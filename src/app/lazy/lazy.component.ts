@@ -3,9 +3,7 @@ import { Component, OnInit } from '@angular/core';
 @Component({
   selector: 'app-lazy',
   template: `
-    <div>
-      I'm loaded lazily!
-    </div>
+    <app-tree></app-tree>
   `
 })
 export class LazyComponent implements OnInit {
