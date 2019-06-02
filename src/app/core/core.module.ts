@@ -1,11 +1,12 @@
 import { NgModule, Optional, SkipSelf } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { SpinnerComponent } from './components/spinner/spinner.component';
 import { HeaderComponent } from './components/header/header.component';
 
 @NgModule({
-  imports: [HttpClientModule],
+  imports: [BrowserAnimationsModule, HttpClientModule],
   declarations: [HeaderComponent, SpinnerComponent],
   providers: []
 })
