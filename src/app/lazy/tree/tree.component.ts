@@ -1,6 +1,6 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { FlatTreeControl } from '@angular/cdk/tree';
-import { Component, Injectable } from '@angular/core';
+import { Component, Injectable, AfterContentInit } from '@angular/core';
 import {
   MatTreeFlatDataSource,
   MatTreeFlattener
@@ -90,19 +90,6 @@ export class ChecklistDatabase {
       return accumulator.concat(node);
     }, []);
   }
-
-  /** Add an item to to-do list */
-  insertItem(parent: TodoItemNode, name: string) {
-    if (parent.children) {
-      parent.children.push({ item: name } as TodoItemNode);
-      this.dataChange.next(this.data);
-    }
-  }
-
-  updateItem(node: TodoItemNode, name: string) {
-    node.item = name;
-    this.dataChange.next(this.data);
-  }
 }
 
 /**
@@ -113,18 +100,12 @@ export class ChecklistDatabase {
   templateUrl: 'tree.component.html',
   providers: [ChecklistDatabase]
 })
-export class TreeComponent {
+export class TreeComponent implements AfterContentInit {
   /** Map from flat node to nested node. This helps us finding the nested node to be modified */
   flatNodeMap = new Map<TodoItemFlatNode, TodoItemNode>();
 
   /** Map from nested node to flattened node. This helps us to keep the same object for selection */
   nestedNodeMap = new Map<TodoItemNode, TodoItemFlatNode>();
-
-  /** A selected parent node to be inserted */
-  selectedParent: TodoItemFlatNode | null = null;
-
-  /** The new item's name */
-  newItemName = '';
 
   treeControl: FlatTreeControl<TodoItemFlatNode>;
 
@@ -156,6 +137,16 @@ export class TreeComponent {
     database.dataChange.subscribe(data => {
       this.dataSource.data = data;
     });
+  }
+
+  ngAfterContentInit() {
+    this.treeControl.dataNodes
+      .filter(node => node.level === 0)
+      .forEach(topLevelNode =>
+        this.checklistSelection.select(
+          ...this.treeControl.getDescendants(topLevelNode)
+        )
+      );
   }
 
   getLevel = (node: TodoItemFlatNode) => node.level;
