@@ -1,6 +1,11 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { FlatTreeControl } from '@angular/cdk/tree';
-import { Component, Injectable, AfterContentInit } from '@angular/core';
+import {
+  Component,
+  Injectable,
+  AfterContentInit,
+  ChangeDetectionStrategy
+} from '@angular/core';
 import {
   MatTreeFlatDataSource,
   MatTreeFlattener
@@ -97,6 +102,7 @@ export class ChecklistDatabase {
  */
 @Component({
   selector: 'app-tree',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: 'tree.component.html',
   providers: [ChecklistDatabase]
 })
@@ -180,6 +186,11 @@ export class TreeComponent implements AfterContentInit {
   /** Whether all the descendants of the node are selected. */
   descendantsAllSelected(node: TodoItemFlatNode): boolean {
     const descendants = this.treeControl.getDescendants(node);
+
+    if (descendants.length === 0) {
+      return this.checklistSelection.isSelected(node);
+    }
+
     const descAllSelected = descendants.every(child =>
       this.checklistSelection.isSelected(child)
     );
@@ -192,6 +203,7 @@ export class TreeComponent implements AfterContentInit {
     const result = descendants.some(child =>
       this.checklistSelection.isSelected(child)
     );
+
     return result && !this.descendantsAllSelected(node);
   }
 
