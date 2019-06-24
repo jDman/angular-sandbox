@@ -1,0 +1,9 @@
+<form [formGroup]="config.name">
+  <label
+    >{{ config.label }}
+
+    <input type="text" [formControlName]="nickName" />
+
+    <input type="checkbox" [formControlName]="contact" />
+  </label>
+</form>
